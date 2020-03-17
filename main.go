@@ -5,10 +5,10 @@ import (
 	"fmt"
 )
 
+// Screen size
 const (
-
-	xScreenLenght int32 = 800
-	yScreenLenght int32 = 600
+	XScreenLenght int32 = 1800
+	YScreenLenght int32 = 800
 )
 
 func main() {
@@ -20,22 +20,12 @@ func main() {
 	defer sdl.Quit()
 	
 	// Create a window object, literally a desktop window
-	window, err := sdl.CreateWindow("mainWindow", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, xScreenLenght, yScreenLenght, sdl.WINDOW_SHOWN)
+	window, err := sdl.CreateWindow("mainWindow", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, XScreenLenght, YScreenLenght, sdl.WINDOW_OPENGL)
 	if err != nil {
 		fmt.Println("Creating main game window:", err)
 		return
 	}
 	defer window.Destroy()
-
-	// Create the window background surface
-	surface, err := window.GetSurface()
-	if err != nil {
-		fmt.Println("Creating window surface:", err)
-		return
-	}
-	rect := sdl.Rect{X:0, Y:0, W:xScreenLenght, H:yScreenLenght}
-	surface.FillRect(&rect, 0xffffffff)
-	window.UpdateSurface()
 
 	// Initialize a rendered object
 	renderer, err := sdl.CreateRenderer(window, -1, sdl.RENDERER_ACCELERATED)
@@ -45,8 +35,8 @@ func main() {
 	}
 	defer renderer.Destroy()
 
-	boyPlayerImg := "sprites/boy_bmps/Idle_1.bmp"
-	boyPlayer, boyImgSize, err := newPlayer(renderer, boyPlayerImg)
+	boyPlayerImg := "sprites/boy_bmps/small_Idle_1.bmp"
+	boyPlayer, err := newPlayer(renderer, boyPlayerImg)
 	if err != nil {
 		fmt.Println("Initializing boy player object:", err)
 		return
@@ -54,11 +44,16 @@ func main() {
 
 	// Runs until the end of game
 	for {
-		if running := controlPlayerLoop(); !running {
+		event := sdl.PollEvent()
+		switch event.(type) {
+		case *sdl.QuitEvent:
+			fmt.Println("Quit")
 			return
 		}
-		renderer.Clear()
-		boyPlayer.draw(renderer, boyImgSize)
+		renderer.SetDrawColor(255, 255, 255, 255)
+        renderer.Clear()
+		boyPlayer.draw(renderer)
+		boyPlayer.update()
 		renderer.Present()
 	}
 }
