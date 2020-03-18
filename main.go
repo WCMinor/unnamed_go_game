@@ -7,8 +7,13 @@ import (
 
 // Screen size
 const (
-	XScreenLenght int32 = 1800
-	YScreenLenght int32 = 800
+	XScreenLength int32 = 1800
+	YScreenLength int32 = 800
+)
+
+// Physics constants
+const (
+	Gravity float32 = 1
 )
 
 func main() {
@@ -20,7 +25,7 @@ func main() {
 	defer sdl.Quit()
 	
 	// Create a window object, literally a desktop window
-	window, err := sdl.CreateWindow("mainWindow", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, XScreenLenght, YScreenLenght, sdl.WINDOW_OPENGL)
+	window, err := sdl.CreateWindow("mainWindow", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, XScreenLength, YScreenLength, sdl.WINDOW_OPENGL)
 	if err != nil {
 		fmt.Println("Creating main game window:", err)
 		return
