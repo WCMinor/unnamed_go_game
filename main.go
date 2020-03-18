@@ -35,12 +35,7 @@ func main() {
 	}
 	defer renderer.Destroy()
 
-	boyPlayerImg := "sprites/boy_bmps/small_Idle_1.bmp"
-	boyPlayer, err := newPlayer(renderer, boyPlayerImg)
-	if err != nil {
-		fmt.Println("Initializing boy player object:", err)
-		return
-	}
+	boyPlayer := newPlayer(renderer, "boy")
 
 	// Runs until the end of game
 	for {
