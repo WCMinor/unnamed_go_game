@@ -9,18 +9,19 @@ import (
 
 const (
 	xVelocity = 0.5
-	yVelocity = 1.5
-	jumpSize int32 = 300
+	yVelocity = 1
+	spritesNum int32 = 15
 	spritesPath = "sprites/"
-	stepsSpeed = time.Millisecond * 20 //milliseconds
+	posSpeed = time.Millisecond * 40 //milliseconds
+	moveSpeed = time.Millisecond * 60 //milliseconds
 )
 type player struct {
 	tex *sdl.Texture
 	name, action, actpos, sense string
 	x, y float32
-	H, W int32
-	lastMove time.Time
-	jumping bool
+	H, W, jumpPos int32
+	lastMove, lastPos time.Time
+	walking, jumping, idle bool
 }
 
 func loadFromBMP(p player, renderer *sdl.Renderer, filepath string) player {
@@ -30,6 +31,7 @@ func loadFromBMP(p player, renderer *sdl.Renderer, filepath string) player {
 	}
 	defer img.Free()
 	// Set texture
+	p.tex.Destroy()
 	p.tex, err = renderer.CreateTextureFromSurface(img)
 	if err != nil {
 		panic(fmt.Errorf("Rendering texture %v", err))
@@ -46,6 +48,7 @@ func loadFromBMP(p player, renderer *sdl.Renderer, filepath string) player {
 func newPlayer(renderer *sdl.Renderer, name string) (p player) {
 	p.name = name
 	p.actpos = "1"
+	p.jumpPos = 1
 	p.action = "Idle"
 	p.sense = "right"
 	p = loadFromBMP(p, renderer, spritesPath + p.name + "/" + p.action + "_" + p.actpos + ".bmp")
@@ -76,18 +79,20 @@ func (p *player) draw(renderer *sdl.Renderer) {
 }
 
 func (p *player) incActpos() {
-	if time.Since(p.lastMove) > stepsSpeed {
-		pos, err := strconv.Atoi(p.actpos)
-		if err != nil {
-			panic(fmt.Errorf("converting action position to integer %v", err))
+	if p.walking || p.idle {
+		if time.Since(p.lastPos) > posSpeed {
+			pos, err := strconv.Atoi(p.actpos)
+			if err != nil {
+				panic(fmt.Errorf("converting action position to integer %v", err))
+			}
+			if pos < 15 {
+				pos ++
+			} else {
+				pos = 1
+			}
+			p.actpos = strconv.Itoa(pos)
+			p.lastPos = time.Now()
 		}
-		if pos < 15 {
-			pos ++
-		} else {
-			pos = 1
-		}
-		p.actpos = strconv.Itoa(pos)
-		p.lastMove = time.Now()
 	}
 }
 
@@ -98,45 +103,66 @@ func (p *player) onFloor() bool {
 	return true
 }
 func (p *player) gravity() {
-	if !p.onFloor() {
+	if !p.onFloor() && ! p.jumping {
 		p.y += Gravity
 	}
 }
 
-func (p *player) jump(){
-	if p.y >= float32(YScreenLength - jumpSize) {
-		p.y -= yVelocity
+func (p *player) jump() {
+// The player should be jumping during exactly 15 positions to match the 15 sprites	
+	if p.jumping {
+		p.idle = false
+		p.action ="Jump"
+		if p.jumpPos < spritesNum {
+			if time.Since(p.lastMove) > moveSpeed {
+				p.y -= yVelocity
+				p.actpos = strconv.Itoa(int(p.jumpPos))
+				p.jumpPos ++
+				p.lastMove = time.Now()
+			}
+		} else {
+			p.jumping = false
+			p.jumpPos = 1
+		}
+	}
+}
+
+func (p *player) move() {
+	p.lastMove = time.Now()
+	p.idle = false
+	if p.sense == "left" {
+		p.x -= xVelocity
+	} else if p.sense == "right" {
 		p.x += xVelocity
-	} else {
-		p.jumping = false
+	}
+
+	if p.onFloor() {
+		p.walking = true
+		p.action = "Walk"
+	}
+}
+
+func (p *player) stayIdle() {
+	if time.Since(p.lastMove) > moveSpeed {
+		p.idle = true
+		p.action = "Idle"
 	}
 }
 
 func (p *player) update() {
 	// Gravity is inevitable
 	p.gravity()
+	p.jump()
 	p.incActpos()
+	p.stayIdle()
 	keys := sdl.GetKeyboardState()
-	if p.jumping {
-		p.action ="Jump"
-		p.jump()
-	} else if keys[sdl.SCANCODE_LEFT] == 1 {
-		// Walking
-		if p.onFloor() {
-			p.x -= xVelocity
-			p.action = "Walk"
-			p.sense = "left"
-		}
-
-	} else if keys[sdl.SCANCODE_RIGHT] == 1 {
-		if p.onFloor() {
-			p.x += xVelocity
-			p.action = "Walk"
-			p.sense = "right"
-		}
-	} else if keys[sdl.SCANCODE_SPACE] == 1 {
+	if keys[sdl.SCANCODE_SPACE] == 1 && p.onFloor() {
 		p.jumping = true
-	} else {
-		p.action = "Idle"
+	} else if keys[sdl.SCANCODE_LEFT] == 1 {
+		p.sense = "left"
+		p.move()
+	} else if keys[sdl.SCANCODE_RIGHT] == 1 {
+		p.sense = "right"
+		p.move()
 	}
 }
