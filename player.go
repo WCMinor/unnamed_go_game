@@ -2,9 +2,9 @@ package main
 
 import (
 	"github.com/veandco/go-sdl2/sdl"
-	"fmt"
+//	"fmt"
 	"time"
-	"strconv"
+//	"strconv"
 )
 
 const (
@@ -12,9 +12,12 @@ const (
 	yVelocity = 1
 	spritesNum int32 = 15
 	spritesPath = "sprites/"
+	playerHeight float64 = 200
+	playerWidth float64 = 184
 	posSpeed = time.Millisecond * 40 //milliseconds
 	moveSpeed = time.Millisecond * 60 //milliseconds
 )
+/*
 type player struct {
 	tex *sdl.Texture
 	name, action, actpos, sense string
@@ -23,29 +26,32 @@ type player struct {
 	lastMove, lastPos time.Time
 	walking, jumping, idle bool
 }
+*/
 
-func loadFromBMP(p player, renderer *sdl.Renderer, filepath string) player {
-	img, err := sdl.LoadBMP(filepath)
-	if err != nil {
-		panic(fmt.Errorf("Loading %v, %v", filepath, err))
-	}
-	defer img.Free()
-	// Set texture
-	p.tex.Destroy()
-	p.tex, err = renderer.CreateTextureFromSurface(img)
-	if err != nil {
-		panic(fmt.Errorf("Rendering texture %v", err))
-	}
+
+func newPlayer(renderer *sdl.Renderer, name string) *element {
+	player := &element{}
+	player.active = true
+	player.name = name
+	player.position.x = XScreenLength / 2.0
+	player.position.y = YScreenLength - playerHeight
+
+	sr := newSpriteRenderer(player, renderer, spritesPath + player.name + "/Idle_1.bmp")
+	player.addComponent(sr)
+
+	mover := newKeyboardMover(player, xVelocity)
+	player.addComponent(mover)
+	jumper := newKeyboardJumper(player, yVelocity)
+	player.addComponent(jumper)
 	
-	// Define Height and Weight from the image itself
-	p.H = img.H
-	p.W = img.W
-
-	return p
+	return player
 }
 
+/*
 // Creates a new player rendered texture ready to use
 func newPlayer(renderer *sdl.Renderer, name string) (p player) {
+	p.H = playerHeight
+	p.W = playerWidth
 	p.name = name
 	p.actpos = "1"
 	p.jumpPos = 1
@@ -166,3 +172,4 @@ func (p *player) update() {
 		p.move()
 	}
 }
+*/

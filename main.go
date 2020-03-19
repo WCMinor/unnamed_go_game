@@ -7,8 +7,8 @@ import (
 
 // Screen size
 const (
-	XScreenLength int32 = 1800
-	YScreenLength int32 = 800
+	XScreenLength float64 = 1800
+	YScreenLength float64 = 800
 )
 
 // Physics constants
@@ -25,7 +25,7 @@ func main() {
 	defer sdl.Quit()
 	
 	// Create a window object, literally a desktop window
-	window, err := sdl.CreateWindow("mainWindow", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, XScreenLength, YScreenLength, sdl.WINDOW_OPENGL)
+	window, err := sdl.CreateWindow("mainWindow", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, int32(XScreenLength), int32(YScreenLength), sdl.WINDOW_OPENGL)
 	if err != nil {
 		fmt.Println("Creating main game window:", err)
 		return
@@ -52,8 +52,17 @@ func main() {
 		}
 		renderer.SetDrawColor(255, 255, 255, 255)
         renderer.Clear()
-		boyPlayer.draw(renderer)
-		boyPlayer.update()
+		err := boyPlayer.draw(renderer)
+		if err != nil {
+			fmt.Println("drawing player:", err)
+			return
+		}
+
+		err = boyPlayer.update()
+		if err != nil {
+			fmt.Println("updating player:", err)
+			return
+		}
 		renderer.Present()
 	}
 }
