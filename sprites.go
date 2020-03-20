@@ -10,10 +10,10 @@ type spritePosUpdater struct {
 	speed time.Duration
 }
 
-func newSpritePosUpdater (container *element, speed time.Duration) *spritePosUpdater {
+func newSpritePosUpdater (container *element) *spritePosUpdater {
 	return &spritePosUpdater{
 		container: container,
-		speed: speed,
+		speed: container.spritePosSpeed,
 	}
 }
 

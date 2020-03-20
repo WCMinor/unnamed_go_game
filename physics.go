@@ -10,10 +10,10 @@ type gravity struct {
 	sr *spriteRenderer
 }
 
-func newGravity (container *element, speed float64) *gravity {
+func newGravity (container *element) *gravity {
 	return &gravity{
 		container: container,
-		speed: speed,
+		speed: Gravity,
 		sr: container.getComponent(&spriteRenderer{}).(*spriteRenderer),
 	}
 }

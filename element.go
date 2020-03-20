@@ -19,12 +19,13 @@ type component interface {
 type element struct {
 	name string
 	active, onFloor, onRightWall, onLeftWall, onCeiling bool
-	spritePos int
+	spritePos, spritesNum int
 	action, direction string
 	position vector
-	rotation, height, width float64
+	rotation, height, width, xVelocity, yVelocity float64
 	flip sdl.RendererFlip
-	lastMove, lastSpritePos time.Time
+	lastMove, lastSpritePos, startJump time.Time
+	spritePosSpeed, moveSpeed time.Duration
 	components []component
 }
 
