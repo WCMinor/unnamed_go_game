@@ -4,7 +4,6 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 //	"fmt"
 	"time"
-//	"strconv"
 )
 
 const (
@@ -14,8 +13,8 @@ const (
 	spritesPath = "sprites/"
 	playerHeight float64 = 200
 	playerWidth float64 = 184
-	posSpeed = time.Millisecond * 40 //milliseconds
-	moveSpeed = time.Millisecond * 60 //milliseconds
+	posSpeed time.Duration = time.Millisecond * 40 //milliseconds
+	moveSpeed time.Duration = time.Millisecond * 60 //milliseconds
 )
 /*
 type player struct {
@@ -32,18 +31,23 @@ type player struct {
 func newPlayer(renderer *sdl.Renderer, name string) *element {
 	player := &element{}
 	player.active = true
+	player.action = "Idle"
 	player.name = name
+	player.spritePos = 1
 	player.position.x = XScreenLength / 2.0
 	player.position.y = YScreenLength - playerHeight
 
-	sr := newSpriteRenderer(player, renderer, spritesPath + player.name + "/Idle_1.bmp")
+	sr := newSpriteRenderer(player, renderer)
 	player.addComponent(sr)
 
 	mover := newKeyboardMover(player, xVelocity)
 	player.addComponent(mover)
 	jumper := newKeyboardJumper(player, yVelocity)
 	player.addComponent(jumper)
-	
+	sPosUpdater := newSpritePosUpdater(player, posSpeed)
+	player.addComponent(sPosUpdater)
+
+
 	return player
 }
 
@@ -86,19 +90,7 @@ func (p *player) draw(renderer *sdl.Renderer) {
 
 func (p *player) incActpos() {
 	if p.walking || p.idle {
-		if time.Since(p.lastPos) > posSpeed {
-			pos, err := strconv.Atoi(p.actpos)
-			if err != nil {
-				panic(fmt.Errorf("converting action position to integer %v", err))
-			}
-			if pos < 15 {
-				pos ++
-			} else {
-				pos = 1
-			}
-			p.actpos = strconv.Itoa(pos)
-			p.lastPos = time.Now()
-		}
+
 	}
 }
 

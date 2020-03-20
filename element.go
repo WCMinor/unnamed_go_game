@@ -4,6 +4,7 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 	"reflect"
 	"fmt"
+	"time"
 )
 
 type vector struct {
@@ -18,9 +19,12 @@ type component interface {
 type element struct {
 	name string
 	active bool
+	spritePos int
+	action, direction string
 	position vector
 	rotation float64
 	flip sdl.RendererFlip
+	lastMove, lastSpritePos time.Time
 	components []component
 }
 

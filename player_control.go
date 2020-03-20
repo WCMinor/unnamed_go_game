@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/veandco/go-sdl2/sdl"
+	"time"
 )
 
 type keyboardMover struct {
@@ -23,8 +24,12 @@ func (mover *keyboardMover) onUpdate() error {
 	keys := sdl.GetKeyboardState()
 	if keys[sdl.SCANCODE_LEFT] == 1 {
 		cont.position.x -= mover.speed
+		cont.flip = sdl.FLIP_HORIZONTAL
+		cont.action = "Walk"
 	} else if keys[sdl.SCANCODE_RIGHT] == 1 {
 		cont.position.x += mover.speed
+		cont.flip = sdl.FLIP_NONE
+		cont.action = "Walk"
 	}
 	return nil
 }
@@ -60,3 +65,32 @@ func (jumper *keyboardJumper) onDraw(renderer *sdl.Renderer) error {
 	return nil
 }
 
+type spritePosUpdater struct {
+	container *element
+	speed time.Duration
+	sr *spriteRenderer
+}
+
+func newSpritePosUpdater (container *element, speed time.Duration) *spritePosUpdater {
+	return &spritePosUpdater{
+		container: container,
+		speed: speed,
+		sr: container.getComponent(&spriteRenderer{}).(*spriteRenderer),
+	}
+}
+
+func (pos *spritePosUpdater) onUpdate() error {
+	cont := pos.container
+	if time.Since(cont.lastSpritePos) > pos.speed && cont.spritePos < 15 {
+		cont.spritePos ++
+		cont.lastSpritePos = time.Now()
+	} else if time.Since(cont.lastSpritePos) > pos.speed && cont.spritePos >= 15 {
+		cont.spritePos = 1
+		cont.lastSpritePos = time.Now()
+	}
+	return nil
+}
+
+func (pos *spritePosUpdater) onDraw(renderer *sdl.Renderer) error {
+	return nil
+}

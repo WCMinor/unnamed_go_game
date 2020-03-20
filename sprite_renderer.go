@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/veandco/go-sdl2/sdl"
 	"fmt"
+	"strconv"
 )
 
 type spriteRenderer struct {
@@ -11,12 +12,13 @@ type spriteRenderer struct {
 	width, height float64
 }
 
-func newSpriteRenderer(container *element, renderer *sdl.Renderer, filename string) *spriteRenderer {
-	tex := texFromBMP(renderer, filename)
+func newSpriteRenderer(container *element, renderer *sdl.Renderer) *spriteRenderer {
+	tex := texFromBMP(renderer, spritesPath + container.name + "/Idle_" + strconv.Itoa(container.spritePos) + ".bmp")
 	_, _, height, width, err := tex.Query()
 	if err != nil {
 		panic(fmt.Errorf("querying texture: %v", err))
 	}
+	defer tex.Destroy()
 	return &spriteRenderer{
 		container: container,
 		tex: tex,
@@ -26,6 +28,9 @@ func newSpriteRenderer(container *element, renderer *sdl.Renderer, filename stri
 }
 
 func (sr *spriteRenderer) onDraw(renderer *sdl.Renderer) error {
+	cont := sr.container
+	sr.tex.Destroy()
+	sr.tex = texFromBMP(renderer, spritesPath + cont.name + "/" + cont.action + "_" + strconv.Itoa(cont.spritePos) + ".bmp")
 	x := sr.container.position.x - (sr.width / 2.0)
 	y := sr.container.position.y - (sr.height /2.0)
 
