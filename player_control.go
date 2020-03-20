@@ -8,14 +8,12 @@ import (
 type keyboardMover struct {
 	container *element
 	speed float64
-	sr *spriteRenderer
 }
 
 func newKeyboardMover (container *element, speed float64) *keyboardMover {
 	return &keyboardMover{
 		container: container,
 		speed: speed,
-		sr: container.getComponent(&spriteRenderer{}).(*spriteRenderer),
 	}
 }
 
@@ -23,13 +21,19 @@ func (mover *keyboardMover) onUpdate() error {
 	cont := mover.container
 	keys := sdl.GetKeyboardState()
 	if keys[sdl.SCANCODE_LEFT] == 1 {
-		cont.position.x -= mover.speed
+		if ! cont.onLeftWall {
+				cont.position.x -= mover.speed
+		}
 		cont.flip = sdl.FLIP_HORIZONTAL
 		cont.action = "Walk"
+		cont.lastMove = time.Now()
 	} else if keys[sdl.SCANCODE_RIGHT] == 1 {
-		cont.position.x += mover.speed
+		if ! cont.onRightWall {
+				cont.position.x += mover.speed
+		}
 		cont.flip = sdl.FLIP_NONE
 		cont.action = "Walk"
+		cont.lastMove = time.Now()
 	}
 	return nil
 }
@@ -41,14 +45,12 @@ func (mover *keyboardMover) onDraw(renderer *sdl.Renderer) error {
 type keyboardJumper struct {
 	container *element
 	speed float64
-	sr *spriteRenderer
 }
 
 func newKeyboardJumper (container *element, speed float64) *keyboardJumper {
 	return &keyboardJumper{
 		container: container,
 		speed: speed,
-		sr: container.getComponent(&spriteRenderer{}).(*spriteRenderer),
 	}
 }
 
@@ -56,7 +58,11 @@ func (jumper *keyboardJumper) onUpdate() error {
 	cont := jumper.container
 	keys := sdl.GetKeyboardState()
 	if keys[sdl.SCANCODE_SPACE] == 1 {
-		cont.position.y -= jumper.speed
+		if ! cont.onCeiling {
+			cont.position.y -= jumper.speed
+			cont.action = "Jump"
+			cont.lastMove = time.Now()
+		}
 	}
 	return nil
 }
@@ -65,32 +71,26 @@ func (jumper *keyboardJumper) onDraw(renderer *sdl.Renderer) error {
 	return nil
 }
 
-type spritePosUpdater struct {
+type idleDetector struct {
 	container *element
 	speed time.Duration
-	sr *spriteRenderer
 }
 
-func newSpritePosUpdater (container *element, speed time.Duration) *spritePosUpdater {
-	return &spritePosUpdater{
+func newIdleDetector(container *element, speed time.Duration) *idleDetector {
+	return &idleDetector{
 		container: container,
 		speed: speed,
-		sr: container.getComponent(&spriteRenderer{}).(*spriteRenderer),
 	}
 }
 
-func (pos *spritePosUpdater) onUpdate() error {
-	cont := pos.container
-	if time.Since(cont.lastSpritePos) > pos.speed && cont.spritePos < 15 {
-		cont.spritePos ++
-		cont.lastSpritePos = time.Now()
-	} else if time.Since(cont.lastSpritePos) > pos.speed && cont.spritePos >= 15 {
-		cont.spritePos = 1
-		cont.lastSpritePos = time.Now()
+func (idle *idleDetector) onUpdate() error {
+	cont := idle.container
+	if time.Since(cont.lastMove) > idle.speed {
+		cont.action = "Idle"
 	}
 	return nil
 }
 
-func (pos *spritePosUpdater) onDraw(renderer *sdl.Renderer) error {
+func (idle *idleDetector) onDraw(renderer *sdl.Renderer) error {
 	return nil
 }

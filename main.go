@@ -10,10 +10,13 @@ const (
 	XScreenLength float64 = 1800
 	YScreenLength float64 = 800
 )
+const (
+	spritesPath = "sprites/"
+)
 
 // Physics constants
 const (
-	Gravity float32 = 1
+	Gravity float64 = 1
 )
 
 func main() {
