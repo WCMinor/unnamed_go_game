@@ -22,6 +22,9 @@ func (g *gravity) onUpdate() error {
 	cont := g.container
 	if ! cont.onFloor {
 		cont.position.y += g.speed
+		for i := range cont.collisionPoints {
+			cont.collisionPoints[i].center = cont.position
+		}
 	}
 	return nil
 }

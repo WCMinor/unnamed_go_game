@@ -23,6 +23,9 @@ func (mover *keyboardMover) onUpdate() error {
 	if keys[sdl.SCANCODE_LEFT] == 1 {
 		if ! cont.onLeftWall {
 				cont.position.x -= mover.speed
+				for i := range cont.collisionPoints {
+					cont.collisionPoints[i].center = cont.position
+				}
 		}
 		cont.flip = sdl.FLIP_HORIZONTAL
 		if cont.onFloor {
@@ -32,6 +35,9 @@ func (mover *keyboardMover) onUpdate() error {
 	} else if keys[sdl.SCANCODE_RIGHT] == 1 {
 		if ! cont.onRightWall {
 				cont.position.x += mover.speed
+				for i := range cont.collisionPoints {
+					cont.collisionPoints[i].center = cont.position
+				}
 		}
 		cont.flip = sdl.FLIP_NONE
 		if cont.onFloor {
@@ -67,6 +73,9 @@ func (jumper *keyboardJumper) onUpdate() error {
 	if ! cont.onCeiling {
 		if time.Since(cont.startJump) < (cont.spritePosSpeed * time.Duration(cont.spritesNum))/2 {
 			cont.position.y -= jumper.speed
+			for i := range cont.collisionPoints {
+				cont.collisionPoints[i].center = cont.position
+			}
 			cont.action = "Jump"
 			cont.lastMove = time.Now()
 		} else if time.Since(cont.startJump) < (cont.spritePosSpeed * time.Duration(cont.spritesNum)) {

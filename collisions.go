@@ -15,7 +15,7 @@ func collides(c1, c2 circle) bool {
 	return dist <= c1.radius + c2.radius
 }
 
-func checCollisions() error {
+func checkCollisions() error {
 	for i := 0 ; i < len(gameElements) -1; i++ {
 		for j := i+1; j < len(gameElements); j++ {
 			for _, c1 := range gameElements[i].collisionPoints {

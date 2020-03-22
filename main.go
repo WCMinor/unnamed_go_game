@@ -46,6 +46,7 @@ func main() {
 	defer renderer.Destroy()
 
 	gameElements = append(gameElements, newPlayer(renderer, "boy"))
+	gameElements = append(gameElements, newStaticPlayer(renderer, "boy"))
 	
 	// Runs until the end of game
 	for {
@@ -57,15 +58,14 @@ func main() {
 		}
 		renderer.SetDrawColor(255, 255, 255, 255)
 		renderer.Clear()
-		
+		checkCollisions()
 		for _, elm := range gameElements {
-				if elm.active {
+			if elm.active {
 				err := elm.draw(renderer)
 				if err != nil {
 					fmt.Println("drawing element:", err)
 					return
 				}
-
 				err = elm.update()
 				if err != nil {
 					fmt.Println("updating element:", err)
@@ -75,5 +75,4 @@ func main() {
 		}
 		renderer.Present()
 	}
-
 }
