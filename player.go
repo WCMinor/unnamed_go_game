@@ -13,7 +13,7 @@ func newPlayer(renderer *sdl.Renderer, name string) *element {
 	player.spritePos = 1
 	player.position.x = XScreenLength / 2.0
 	player.xVelocity = 0.5
-	player.yVelocity = 2
+	player.yVelocity = 1.5
 	player.spritesNum = 15
 	player.spritePosSpeed = time.Millisecond * 40 //milliseconds
 	player.moveSpeed = time.Millisecond * 160 //milliseconds
@@ -38,6 +38,13 @@ func newPlayer(renderer *sdl.Renderer, name string) *element {
 	player.addComponent(ons)
 	idle := newIdleDetector(player)
 	player.addComponent(idle)
+
+	colPoint := circle{
+		center: player.position,
+		radius: player.height / 2,
+	}
+
+	player.collisionPoints = append(player.collisionPoints, colPoint)
 
 	return player
 }

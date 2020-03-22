@@ -14,6 +14,7 @@ type vector struct {
 type component interface {
 	onUpdate() error
 	onDraw(renderer *sdl.Renderer) error
+	onCollision(other *element) error
 }
 
 type element struct {
@@ -26,6 +27,7 @@ type element struct {
 	flip sdl.RendererFlip
 	lastMove, lastSpritePos, startJump time.Time
 	spritePosSpeed, moveSpeed time.Duration
+	collisionPoints []circle
 	components []component
 }
 
@@ -72,4 +74,14 @@ func (elem *element) getComponent(withType component) component {
 	panic(fmt.Sprintf(
 		"no component found with type of %v",
 		reflect.TypeOf(withType)))
+}
+
+func (elem *element) collision(other *element) error {
+	for _, comp := range elem.components {
+		err := comp.onCollision(other)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

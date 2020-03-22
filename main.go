@@ -18,6 +18,8 @@ const (
 const (
 	Gravity float64 = 1
 )
+// Create an slice with all the elements
+var gameElements []*element
 
 func main() {
 	// Initialize sld library
@@ -43,8 +45,8 @@ func main() {
 	}
 	defer renderer.Destroy()
 
-	boyPlayer := newPlayer(renderer, "boy")
-
+	gameElements = append(gameElements, newPlayer(renderer, "boy"))
+	
 	// Runs until the end of game
 	for {
 		event := sdl.PollEvent()
@@ -54,18 +56,24 @@ func main() {
 			return
 		}
 		renderer.SetDrawColor(255, 255, 255, 255)
-        renderer.Clear()
-		err := boyPlayer.draw(renderer)
-		if err != nil {
-			fmt.Println("drawing player:", err)
-			return
-		}
+		renderer.Clear()
+		
+		for _, elm := range gameElements {
+				if elm.active {
+				err := elm.draw(renderer)
+				if err != nil {
+					fmt.Println("drawing element:", err)
+					return
+				}
 
-		err = boyPlayer.update()
-		if err != nil {
-			fmt.Println("updating player:", err)
-			return
+				err = elm.update()
+				if err != nil {
+					fmt.Println("updating element:", err)
+					return
+				}
+			}
 		}
 		renderer.Present()
 	}
+
 }

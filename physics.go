@@ -30,6 +30,10 @@ func (g *gravity) onDraw(renderer *sdl.Renderer) error {
 	return nil
 }
 
+func (g *gravity) onCollision(other *element) error {
+	return nil
+}
+
 type onSurface struct {
 	container *element
 	sr *spriteRenderer
@@ -69,3 +73,6 @@ func (ons *onSurface) onDraw(renderer *sdl.Renderer) error {
 	return nil
 }
 
+func (ons *onSurface) onCollision(other *element) error {
+	return nil
+}

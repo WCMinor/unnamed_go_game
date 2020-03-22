@@ -62,3 +62,7 @@ func texFromBMP(renderer *sdl.Renderer, filepath string) *sdl.Texture {
 func (sr *spriteRenderer) onUpdate() error {
 	return nil
 }
+
+func (sr *spriteRenderer) onCollision(other *element) error {
+	return nil
+}

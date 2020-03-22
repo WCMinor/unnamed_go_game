@@ -46,6 +46,10 @@ func (mover *keyboardMover) onDraw(renderer *sdl.Renderer) error {
 	return nil
 }
 
+func (mover *keyboardMover) onCollision(other *element) error {
+	return nil
+}
+
 type keyboardJumper struct {
 	container *element
 	speed float64
@@ -83,6 +87,10 @@ func (jumper *keyboardJumper) onDraw(renderer *sdl.Renderer) error {
 	return nil
 }
 
+func (jumper *keyboardJumper) onCollision(other *element) error {
+	return nil
+}
+
 type idleDetector struct {
 	container *element
 	speed time.Duration
@@ -104,5 +112,9 @@ func (idle *idleDetector) onUpdate() error {
 }
 
 func (idle *idleDetector) onDraw(renderer *sdl.Renderer) error {
+	return nil
+}
+
+func (idle *idleDetector) onCollision(other *element) error {
 	return nil
 }

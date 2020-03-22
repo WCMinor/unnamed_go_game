@@ -32,3 +32,7 @@ func (pos *spritePosUpdater) onUpdate() error {
 func (pos *spritePosUpdater) onDraw(renderer *sdl.Renderer) error {
 	return nil
 }
+
+func (pos *spritePosUpdater) onCollision(other *element) error {
+	return nil
+}
