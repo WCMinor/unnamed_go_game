@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/veandco/go-sdl2/sdl"
 	"fmt"
+	"time"
 )
 
 // Screen size
@@ -16,10 +17,14 @@ const (
 
 // Physics constants
 const (
-	Gravity float64 = 1
+	Gravity float64 = 10
+	FramesPerSecond float64 = 60
 )
-// Create an slice with all the elements
-var gameElements []*element
+//  an slice with all the elements
+var (
+	gameElements []*element
+	delta float64
+)
 
 func main() {
 	// Initialize sld library
@@ -50,6 +55,7 @@ func main() {
 	
 	// Runs until the end of game
 	for {
+		startOfGameLoop := time.Now()
 		event := sdl.PollEvent()
 		switch event.(type) {
 		case *sdl.QuitEvent:
@@ -74,5 +80,6 @@ func main() {
 			}
 		}
 		renderer.Present()
+		delta = time.Since(startOfGameLoop).Seconds() * FramesPerSecond
 	}
 }

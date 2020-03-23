@@ -12,8 +12,8 @@ func newPlayer(renderer *sdl.Renderer, name string) *element {
 	player.name = name
 	player.spritePos = 1
 	player.position.x = XScreenLength / 2.0
-	player.xVelocity = 0.5
-	player.yVelocity = 1.5
+	player.xVelocity = 10
+	player.yVelocity = 20
 	player.spritesNum = 15
 	player.spritePosSpeed = time.Millisecond * 40 //milliseconds
 	player.moveSpeed = time.Millisecond * 160 //milliseconds
@@ -56,8 +56,8 @@ func newStaticPlayer(renderer *sdl.Renderer, name string) *element {
 	player.name = name
 	player.spritePos = 1
 	player.position.x = XScreenLength / 1.5
-	player.xVelocity = 0.5
-	player.yVelocity = 1.5
+	player.xVelocity = 0.5 * delta
+	player.yVelocity = 10.5 * delta
 	player.spritesNum = 15
 	player.spritePosSpeed = time.Millisecond * 40 //milliseconds
 	player.moveSpeed = time.Millisecond * 160 //milliseconds

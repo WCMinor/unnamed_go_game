@@ -22,7 +22,7 @@ func (mover *keyboardMover) onUpdate() error {
 	keys := sdl.GetKeyboardState()
 	if keys[sdl.SCANCODE_LEFT] == 1 {
 		if ! cont.onLeftWall {
-				cont.position.x -= mover.speed
+				cont.position.x -= mover.speed * delta
 				for i := range cont.collisionPoints {
 					cont.collisionPoints[i].center = cont.position
 				}
@@ -34,7 +34,7 @@ func (mover *keyboardMover) onUpdate() error {
 		cont.lastMove = time.Now()
 	} else if keys[sdl.SCANCODE_RIGHT] == 1 {
 		if ! cont.onRightWall {
-				cont.position.x += mover.speed
+				cont.position.x += mover.speed * delta
 				for i := range cont.collisionPoints {
 					cont.collisionPoints[i].center = cont.position
 				}
@@ -72,7 +72,7 @@ func (jumper *keyboardJumper) onUpdate() error {
 	cont := jumper.container
 	if ! cont.onCeiling {
 		if time.Since(cont.startJump) < (cont.spritePosSpeed * time.Duration(cont.spritesNum))/2 {
-			cont.position.y -= jumper.speed
+			cont.position.y -= jumper.speed * delta
 			for i := range cont.collisionPoints {
 				cont.collisionPoints[i].center = cont.position
 			}
