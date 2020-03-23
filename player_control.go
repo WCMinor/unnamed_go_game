@@ -71,17 +71,17 @@ func newKeyboardJumper (container *element) *keyboardJumper {
 func (jumper *keyboardJumper) onUpdate() error {
 	cont := jumper.container
 	if ! cont.onCeiling {
-		if time.Since(cont.startJump) < (cont.spritePosSpeed * time.Duration(cont.spritesNum))/2 {
+/*		if time.Since(cont.startJump) < (cont.spritePosSpeed * time.Duration(cont.spritesNum))/2 {
 			cont.position.y -= jumper.speed * delta
 			for i := range cont.collisionPoints {
 				cont.collisionPoints[i].center = cont.position
 			}
 			cont.action = "Jump"
 			cont.lastMove = time.Now()
-		} else if time.Since(cont.startJump) < (cont.spritePosSpeed * time.Duration(cont.spritesNum)) {
+		} else if time.Since(cont.startJump) < (cont.spritePosSpeed * time.Duration(cont.spritesNum)) {*/
 			cont.action = "Jump"
 			cont.lastMove = time.Now()
-		}
+		//}
 		keys := sdl.GetKeyboardState()
 		if keys[sdl.SCANCODE_SPACE] == 1 {
 			if cont.onFloor {

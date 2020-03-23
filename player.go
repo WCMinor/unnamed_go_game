@@ -3,24 +3,44 @@ package main
 import (
 	"github.com/veandco/go-sdl2/sdl"
 	"time"
+	"path"
+	"fmt"
 )
 
 func newPlayer(renderer *sdl.Renderer, name string) *element {
+	var sampleRate float64 = 20
 	player := &element{}
 	player.active = true
 	player.action = "Idle"
 	player.name = name
-	player.spritePos = 1
 	player.position.x = XScreenLength / 2.0
 	player.xVelocity = 10
 	player.yVelocity = 20
-	player.spritesNum = 15
-	player.spritePosSpeed = time.Millisecond * 40 //milliseconds
 	player.moveSpeed = time.Millisecond * 160 //milliseconds
 
 
 	sr := newSpriteRenderer(player, renderer)
 	player.addComponent(sr)
+
+	sequences := make(map[string]*sequence)
+
+	sequenceList :=[]string{
+		"idle",
+		"walk",
+		"run",
+		"jump",
+		"dead",
+	}
+
+	for _, seq := range sequenceList {
+		sequence, err := newSequence(path.Join(spritesPath, player.name, seq), sampleRate, true, renderer)
+		if err != nil {
+			panic(fmt.Errorf("loading textures sequence: %v", err))
+		}
+		sequences[seq] = sequence
+	}
+	animator := newAnimator(player, sequences, "idle")
+	player.addComponent(animator)
 
 	player.height = sr.height
 	player.width = sr.width
@@ -32,8 +52,6 @@ func newPlayer(renderer *sdl.Renderer, name string) *element {
 	player.addComponent(mover)
 	jumper := newKeyboardJumper(player)
 	player.addComponent(jumper)
-	sPosUpdater := newSpritePosUpdater(player)
-	player.addComponent(sPosUpdater)
 	ons := newOnSurface(player)
 	player.addComponent(ons)
 	idle := newIdleDetector(player)
@@ -54,12 +72,9 @@ func newStaticPlayer(renderer *sdl.Renderer, name string) *element {
 	player.active = true
 	player.action = "Idle"
 	player.name = name
-	player.spritePos = 1
 	player.position.x = XScreenLength / 1.5
 	player.xVelocity = 0.5 * delta
 	player.yVelocity = 10.5 * delta
-	player.spritesNum = 15
-	player.spritePosSpeed = time.Millisecond * 40 //milliseconds
 	player.moveSpeed = time.Millisecond * 160 //milliseconds
 
 
@@ -72,8 +87,6 @@ func newStaticPlayer(renderer *sdl.Renderer, name string) *element {
 
 	gravity := newGravity(player)
 	player.addComponent(gravity)
-	sPosUpdater := newSpritePosUpdater(player)
-	player.addComponent(sPosUpdater)
 	ons := newOnSurface(player)
 	player.addComponent(ons)
 	idle := newIdleDetector(player)

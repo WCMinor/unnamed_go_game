@@ -12,7 +12,7 @@ const (
 	YScreenLength float64 = 800
 )
 const (
-	spritesPath = "sprites/"
+	spritesPath = "sprites"
 )
 
 // Physics constants
