@@ -7,14 +7,12 @@ import (
 type gravity struct {
 	container *element
 	speed float64
-	sr *spriteRenderer
 }
 
 func newGravity (container *element) *gravity {
 	return &gravity{
 		container: container,
 		speed: Gravity,
-		sr: container.getComponent(&spriteRenderer{}).(*spriteRenderer),
 	}
 }
 
@@ -39,13 +37,11 @@ func (g *gravity) onCollision(other *element) error {
 
 type onSurface struct {
 	container *element
-	sr *spriteRenderer
 }
 
 func newOnSurface (container *element) *onSurface {
 	return &onSurface{
 		container: container,
-		sr: container.getComponent(&spriteRenderer{}).(*spriteRenderer),
 	}
 }
 

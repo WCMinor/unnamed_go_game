@@ -6,7 +6,7 @@ import (
 )
 
 
-func drawTextue(tex *sdl.Texture, position vector, rotation float64, flip sdl.RendererFlip, renderer *sdl.Renderer) error {
+func drawTexture(tex *sdl.Texture, position vector, rotation float64, flip sdl.RendererFlip, renderer *sdl.Renderer) error {
 	_, _, height, width, err := tex.Query()
 	if err != nil {
 		return fmt.Errorf("querying texture: %v", err)
@@ -29,16 +29,19 @@ func drawTextue(tex *sdl.Texture, position vector, rotation float64, flip sdl.Re
 	return nil
 }
 
-func loadTextureFromBMP(filename string, renderer *sdl.Renderer) (*sdl.Texture, error) {
+func loadTextureFromBMP(filename string, renderer *sdl.Renderer) (width int32, height int32, tex *sdl.Texture, err error) {
 	img, err := sdl.LoadBMP(filename)
 	if err != nil {
-		return nil, fmt.Errorf("Loading %v, %v", filename, err)
+		return 0, 0, nil, fmt.Errorf("Loading %v, %v", filename, err)
 	}
 	defer img.Free()
 	// Set texture
-	tex, err := renderer.CreateTextureFromSurface(img)
+	tex, err = renderer.CreateTextureFromSurface(img)
 	if err != nil {
-		return nil, fmt.Errorf("Rendering texture %v", err)
+		return 0, 0, nil, fmt.Errorf("Rendering texture %v", err)
 	}
-	return tex, nil
+	width = img.W
+	height = img.H
+
+	return width, height, tex, nil
 }

@@ -19,9 +19,6 @@ func newPlayer(renderer *sdl.Renderer, name string) *element {
 	player.moveSpeed = time.Millisecond * 160 //milliseconds
 
 
-	sr := newSpriteRenderer(player, renderer)
-	player.addComponent(sr)
-
 	sequences := make(map[string]*sequence)
 
 	sequenceList :=[]string{
@@ -41,9 +38,12 @@ func newPlayer(renderer *sdl.Renderer, name string) *element {
 	}
 	animator := newAnimator(player, sequences, "idle")
 	player.addComponent(animator)
-
-	player.height = sr.height
-	player.width = sr.width
+	width, height, _, err := loadTextureFromBMP(path.Join(spritesPath, player.name, "idle/1.bmp"), renderer)
+	if err != nil {
+		panic(fmt.Errorf("getting info from bmp: %v", err))
+	}
+	player.width = float64(width)
+	player.height = float64(height)
 	player.position.y = YScreenLength - player.height
 
 	gravity := newGravity(player)

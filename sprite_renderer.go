@@ -13,23 +13,25 @@ type spriteRenderer struct {
 }
 
 func newSpriteRenderer(container *element, renderer *sdl.Renderer) *spriteRenderer {
-	tex, err := loadTextureFromBMP(path.Join(spritesPath, container.name, "idle/1.bmp"), renderer)
-	_, _, height, width, err := tex.Query()
+	sr := &spriteRenderer{}
+	sr.container = container
+	var err error
+	_, _, sr.tex, err = loadTextureFromBMP(path.Join(spritesPath, container.name, "idle/1.bmp"), renderer)
+	if err != nil {
+		panic(fmt.Errorf("loading texture: %v", err))
+	}
+	_, _, height, width, err := sr.tex.Query()
 	if err != nil {
 		panic(fmt.Errorf("querying texture: %v", err))
 	}
-	//defer tex.Destroy()
-	return &spriteRenderer{
-		container: container,
-		tex: tex,
-		width: float64(width),
-		height: float64(height),
-	}
+	sr.width = float64(width)
+	sr.height = float64(height)
+	return sr
 }
 
 func (sr *spriteRenderer) onDraw(renderer *sdl.Renderer) error {
 	cont := sr.container
-	err := drawTextue(sr.tex, cont.position, cont.rotation, cont.flip, renderer)
+	err := drawTexture(sr.tex, cont.position, cont.rotation, cont.flip, renderer)
 	if err != nil {
 		panic(fmt.Errorf("drawing texture %v", err))
 	}

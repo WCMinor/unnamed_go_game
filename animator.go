@@ -28,7 +28,7 @@ func newAnimator(container *element, sequences map[string]*sequence, defaultSequ
 func (an *animator) onDraw(renderer *sdl.Renderer) error {
 	tex := an.sequences[an.currentSequence].texture()
 
-	return drawTextue(tex, an.container.position, an.container.rotation, an.container.flip, renderer)
+	return drawTexture(tex, an.container.position, an.container.rotation, an.container.flip, renderer)
 }
 
 func (an *animator) onUpdate() error {
@@ -62,7 +62,7 @@ func newSequence(filepath string, sampleRate float64, loop bool, renderer *sdl.R
 	}
 	for _, file := range(files) {
 		filename := path.Join(filepath, file.Name())
-		tex, err := loadTextureFromBMP(filename, renderer)
+		_, _, tex, err := loadTextureFromBMP(filename, renderer)
 		if err != nil {
 			return nil, fmt.Errorf("loading texture from file: %v", err)
 		}
