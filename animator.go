@@ -15,26 +15,29 @@ type animator struct {
 	lastFrameChange time.Time
 }
 
-func newAnimator(container *element, sequences map[string]*sequence, defaultSequence string) *animator {
+func newAnimator(container *element, sequences map[string]*sequence) *animator {
 	var an animator
 	an.container = container
 	an.sequences = sequences
-	an.currentSequence = defaultSequence
+	an.currentSequence = container.action
 	an.lastFrameChange = time.Now()
 
 	return &an
 }
 
 func (an *animator) onDraw(renderer *sdl.Renderer) error {
+	an.currentSequence = an.container.action
 	tex := an.sequences[an.currentSequence].texture()
 
 	return drawTexture(tex, an.container.position, an.container.rotation, an.container.flip, renderer)
 }
 
 func (an *animator) onUpdate() error {
+	an.currentSequence = an.container.action
 	sequence := an.sequences[an.currentSequence]
+	// change sequences at frame interval
 	frameInterval := float64(time.Second) / sequence.sampleRate
-
+	
 	if time.Since(an.lastFrameChange) > time.Duration(frameInterval) {
 		sequence.nextFrame()
 		an.lastFrameChange = time.Now()
@@ -52,6 +55,7 @@ type sequence struct {
 	frame int
 	sampleRate float64
 	loop bool
+	auto bool
 }
 
 func newSequence(filepath string, sampleRate float64, loop bool, renderer *sdl.Renderer) (*sequence, error) {

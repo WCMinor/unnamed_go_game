@@ -16,7 +16,7 @@ func newSpriteRenderer(container *element, renderer *sdl.Renderer) *spriteRender
 	sr := &spriteRenderer{}
 	sr.container = container
 	var err error
-	_, _, sr.tex, err = loadTextureFromBMP(path.Join(spritesPath, container.name, "idle/1.bmp"), renderer)
+	_, _, sr.tex, err = loadTextureFromBMP(path.Join(spritesPath, container.name, container.action, "1.bmp"), renderer)
 	if err != nil {
 		panic(fmt.Errorf("loading texture: %v", err))
 	}

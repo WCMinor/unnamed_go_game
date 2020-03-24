@@ -11,11 +11,12 @@ func newPlayer(renderer *sdl.Renderer, name string) *element {
 	var sampleRate float64 = 20
 	player := &element{}
 	player.active = true
-	player.action = "Idle"
+	player.action = "idle"
 	player.name = name
 	player.position.x = XScreenLength / 2.0
 	player.xVelocity = 10
-	player.yVelocity = 20
+	player.yVelocity = 2
+	player.jumpHigh = 250
 	player.moveSpeed = time.Millisecond * 160 //milliseconds
 
 
@@ -36,7 +37,7 @@ func newPlayer(renderer *sdl.Renderer, name string) *element {
 		}
 		sequences[seq] = sequence
 	}
-	animator := newAnimator(player, sequences, "idle")
+	animator := newAnimator(player, sequences)
 	player.addComponent(animator)
 	width, height, _, err := loadTextureFromBMP(path.Join(spritesPath, player.name, "idle/1.bmp"), renderer)
 	if err != nil {
@@ -70,7 +71,7 @@ func newPlayer(renderer *sdl.Renderer, name string) *element {
 func newStaticPlayer(renderer *sdl.Renderer, name string) *element {
 	player := &element{}
 	player.active = true
-	player.action = "Idle"
+	player.action = "idle"
 	player.name = name
 	player.position.x = XScreenLength / 1.5
 	player.xVelocity = 0.5 * delta

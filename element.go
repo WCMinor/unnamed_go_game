@@ -19,12 +19,13 @@ type component interface {
 
 type element struct {
 	name string
-	active, onFloor, onRightWall, onLeftWall, onCeiling bool
+	active, onFloor, onRightWall, onLeftWall, onCeiling, jumping bool
 	action, direction string
 	position vector
-	rotation, height, width, xVelocity, yVelocity float64
+	spritePos int
+	rotation, height, width, xVelocity, yVelocity, jumpHigh float64
 	flip sdl.RendererFlip
-	lastMove, startJump time.Time
+	lastMove time.Time
 	moveSpeed time.Duration
 	collisionPoints []circle
 	components []component

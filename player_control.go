@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/veandco/go-sdl2/sdl"
 	"time"
+	"fmt"
 )
 
 type keyboardMover struct {
@@ -29,7 +30,7 @@ func (mover *keyboardMover) onUpdate() error {
 		}
 		cont.flip = sdl.FLIP_HORIZONTAL
 		if cont.onFloor {
-			cont.action = "Walk"
+			cont.action = "walk"
 		}
 		cont.lastMove = time.Now()
 	} else if keys[sdl.SCANCODE_RIGHT] == 1 {
@@ -41,7 +42,7 @@ func (mover *keyboardMover) onUpdate() error {
 		}
 		cont.flip = sdl.FLIP_NONE
 		if cont.onFloor {
-			cont.action = "Walk"
+			cont.action = "walk"
 		}
 		cont.lastMove = time.Now()
 	}
@@ -70,23 +71,23 @@ func newKeyboardJumper (container *element) *keyboardJumper {
 
 func (jumper *keyboardJumper) onUpdate() error {
 	cont := jumper.container
-	if ! cont.onCeiling {
-/*		if time.Since(cont.startJump) < (cont.spritePosSpeed * time.Duration(cont.spritesNum))/2 {
-			cont.position.y -= jumper.speed * delta
+	if ! cont.onCeiling && cont.jumping {
+		if (YScreenLength - cont.position.y) <= cont.jumpHigh {
+			fmt.Println("jumping")
+			cont.position.y -= Gravity * delta * cont.yVelocity
 			for i := range cont.collisionPoints {
 				cont.collisionPoints[i].center = cont.position
 			}
-			cont.action = "Jump"
+			cont.action = "jump"
 			cont.lastMove = time.Now()
-		} else if time.Since(cont.startJump) < (cont.spritePosSpeed * time.Duration(cont.spritesNum)) {*/
-			cont.action = "Jump"
-			cont.lastMove = time.Now()
-		//}
+		} else {
+			cont.jumping = false
+		}
+	}
+	if cont.onFloor {
 		keys := sdl.GetKeyboardState()
 		if keys[sdl.SCANCODE_SPACE] == 1 {
-			if cont.onFloor {
-				cont.startJump = time.Now()
-			}
+			cont.jumping = true
 		}
 	}
 	return nil
@@ -115,7 +116,7 @@ func newIdleDetector(container *element) *idleDetector {
 func (idle *idleDetector) onUpdate() error {
 	cont := idle.container
 	if time.Since(cont.lastMove) > idle.speed {
-		cont.action = "Idle"
+		cont.action = "idle"
 	}
 	return nil
 }
