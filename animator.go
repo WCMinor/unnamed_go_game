@@ -28,7 +28,6 @@ func newAnimator(container *element, sequences map[string]*sequence) *animator {
 func (an *animator) onDraw(renderer *sdl.Renderer) error {
 	an.currentSequence = an.container.action
 	tex := an.sequences[an.currentSequence].texture()
-
 	return drawTexture(tex, an.container.position, an.container.rotation, an.container.flip, renderer)
 }
 
@@ -37,12 +36,10 @@ func (an *animator) onUpdate() error {
 	sequence := an.sequences[an.currentSequence]
 	// change sequences at frame interval
 	frameInterval := float64(time.Second) / sequence.sampleRate
-	
 	if time.Since(an.lastFrameChange) > time.Duration(frameInterval) {
 		sequence.nextFrame()
 		an.lastFrameChange = time.Now()
 	}
-
 	return nil
 }
 
@@ -74,7 +71,7 @@ func newSequence(filepath string, sampleRate float64, loop bool, renderer *sdl.R
 	}
 	seq.sampleRate = sampleRate
 	seq.loop = loop
-
+	seq.frame = 1
 	return &seq, nil
 
 }

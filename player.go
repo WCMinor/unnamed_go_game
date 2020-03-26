@@ -39,7 +39,7 @@ func newPlayer(renderer *sdl.Renderer, name string) *element {
 	}
 	animator := newAnimator(player, sequences)
 	player.addComponent(animator)
-	width, height, _, err := loadTextureFromBMP(path.Join(spritesPath, player.name, "idle/1.bmp"), renderer)
+	width, height, _, err := loadTextureFromBMP(path.Join(spritesPath, player.name, "idle/01.bmp"), renderer)
 	if err != nil {
 		panic(fmt.Errorf("getting info from bmp: %v", err))
 	}
@@ -69,6 +69,7 @@ func newPlayer(renderer *sdl.Renderer, name string) *element {
 }
 
 func newStaticPlayer(renderer *sdl.Renderer, name string) *element {
+	var sampleRate float64 = 20
 	player := &element{}
 	player.active = true
 	player.action = "idle"
@@ -78,12 +79,31 @@ func newStaticPlayer(renderer *sdl.Renderer, name string) *element {
 	player.yVelocity = 10.5 * delta
 	player.moveSpeed = time.Millisecond * 160 //milliseconds
 
+	sequences := make(map[string]*sequence)
 
-	sr := newSpriteRenderer(player, renderer)
-	player.addComponent(sr)
+	sequencesMap := map[string]bool{
+		"idle": true,
+		"walk": true,
+		"run": true,
+		"jump": true,
+		"dead": false,
+	}
 
-	player.height = sr.height
-	player.width = sr.width
+	for seq, loop := range sequencesMap {
+		sequence, err := newSequence(path.Join(spritesPath, player.name, seq), sampleRate, loop, renderer)
+		if err != nil {
+			panic(fmt.Errorf("loading textures sequence: %v", err))
+		}
+		sequences[seq] = sequence
+	}
+	animator := newAnimator(player, sequences)
+	player.addComponent(animator)
+	width, height, _, err := loadTextureFromBMP(path.Join(spritesPath, player.name, "idle/01.bmp"), renderer)
+	if err != nil {
+		panic(fmt.Errorf("getting info from bmp: %v", err))
+	}
+	player.width = float64(width)
+	player.height = float64(height)
 	player.position.y = YScreenLength - player.height
 
 	gravity := newGravity(player)
@@ -92,7 +112,7 @@ func newStaticPlayer(renderer *sdl.Renderer, name string) *element {
 	player.addComponent(ons)
 	idle := newIdleDetector(player)
 	player.addComponent(idle)
-	colDestroy := newDestroyOnCollision(player)
+	colDestroy := newDieOnCollision(player)
 	player.addComponent(colDestroy)
 
 	colPoint := circle{

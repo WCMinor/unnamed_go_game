@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/veandco/go-sdl2/sdl"
 	"time"
-	"fmt"
 )
 
 type keyboardMover struct {
@@ -73,7 +72,6 @@ func (jumper *keyboardJumper) onUpdate() error {
 	cont := jumper.container
 	if ! cont.onCeiling && cont.jumping {
 		if (YScreenLength - cont.position.y) <= cont.jumpHigh {
-			fmt.Println("jumping")
 			cont.position.y -= Gravity * delta * cont.yVelocity
 			for i := range cont.collisionPoints {
 				cont.collisionPoints[i].center = cont.position
@@ -115,7 +113,7 @@ func newIdleDetector(container *element) *idleDetector {
 
 func (idle *idleDetector) onUpdate() error {
 	cont := idle.container
-	if time.Since(cont.lastMove) > idle.speed {
+	if time.Since(cont.lastMove) > idle.speed && cont.action != "dead" {
 		cont.action = "idle"
 	}
 	return nil
