@@ -71,7 +71,7 @@ func newKeyboardJumper (container *element) *keyboardJumper {
 func (jumper *keyboardJumper) onUpdate() error {
 	cont := jumper.container
 	if ! cont.onCeiling && cont.jumping {
-		if (YScreenLength - cont.position.y) <= cont.jumpHigh {
+		if (YScreenLength - cont.position.y) <= cont.jumpHeight {
 			cont.position.y -= Gravity * delta * cont.yVelocity
 			for i := range cont.collisionPoints {
 				cont.collisionPoints[i].center = cont.position

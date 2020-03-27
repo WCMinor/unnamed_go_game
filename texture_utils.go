@@ -7,12 +7,12 @@ import (
 
 
 func drawTexture(tex *sdl.Texture, position vector, rotation float64, flip sdl.RendererFlip, renderer *sdl.Renderer) error {
-	_, _, height, width, err := tex.Query()
+	_, _, width, height, err := tex.Query()
 	if err != nil {
 		return fmt.Errorf("querying texture: %v", err)
 	}
 	x := position.x - (float64(width) / 2.0)
-	y := position.y - (float64(height) /2.0)
+	y := position.y - (float64(height) / 2.0)
 
 	err = renderer.CopyEx(
 		tex,

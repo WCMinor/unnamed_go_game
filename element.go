@@ -23,7 +23,7 @@ type element struct {
 	action, direction string
 	position vector
 	spritePos int
-	rotation, height, width, xVelocity, yVelocity, jumpHigh float64
+	rotation, xVelocity, yVelocity, jumpHeight float64
 	flip sdl.RendererFlip
 	lastMove time.Time
 	moveSpeed time.Duration

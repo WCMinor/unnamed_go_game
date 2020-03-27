@@ -12,15 +12,15 @@ type spriteRenderer struct {
 	width, height float64
 }
 
-func newSpriteRenderer(container *element, renderer *sdl.Renderer) *spriteRenderer {
+func newSpriteRenderer(container *element, filename string, renderer *sdl.Renderer) *spriteRenderer {
 	sr := &spriteRenderer{}
 	sr.container = container
 	var err error
-	_, _, sr.tex, err = loadTextureFromBMP(path.Join(spritesPath, container.name, container.action, "1.bmp"), renderer)
+	_, _, sr.tex, err = loadTextureFromBMP(path.Join(spritesPath, filename), renderer)
 	if err != nil {
 		panic(fmt.Errorf("loading texture: %v", err))
 	}
-	_, _, height, width, err := sr.tex.Query()
+	_, _, width, height, err := sr.tex.Query()
 	if err != nil {
 		panic(fmt.Errorf("querying texture: %v", err))
 	}

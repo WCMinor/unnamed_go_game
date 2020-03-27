@@ -37,29 +37,33 @@ func (g *gravity) onCollision(other *element) error {
 
 type onSurface struct {
 	container *element
+	animator * animator
 }
 
 func newOnSurface (container *element) *onSurface {
 	return &onSurface{
 		container: container,
+		animator: container.getComponent(&animator{}).(*animator),
 	}
 }
 
 func (ons *onSurface) onUpdate() error {
 	cont := ons.container
-	if (cont.position.y + cont.height / 2) >= YScreenLength {
+	height := ons.animator.height
+	width := ons.animator.width
+	if (cont.position.y + height / 2) >= YScreenLength {
 		cont.onFloor = true
 	} else {
 		cont.onFloor = false
 	}
-	if (cont.position.y - cont.height / 2) <= 0 {
+	if (cont.position.y - height / 2) <= 0 {
 		cont.onCeiling = true
 	} else {
 		cont.onCeiling = false
 	}
-	if (cont.position.x - cont.width /2 ) <= 0 {
+	if (cont.position.x - width /2 ) <= 0 {
 		cont.onLeftWall = true
-	} else if (cont.position.x + cont.width /2 ) >= XScreenLength {
+	} else if (cont.position.x + width /2 ) >= XScreenLength {
 		cont.onRightWall = true
 	} else {
 		cont.onRightWall = false

@@ -13,16 +13,20 @@ type animator struct {
 	sequences map[string]*sequence
 	currentSequence string
 	lastFrameChange time.Time
+	width, height float64
 }
 
-func newAnimator(container *element, sequences map[string]*sequence) *animator {
+func newAnimator(container *element, sequences map[string]*sequence) (*animator, error) {
 	var an animator
 	an.container = container
 	an.sequences = sequences
 	an.currentSequence = container.action
 	an.lastFrameChange = time.Now()
+	_, _, width, height, err := sequences[container.action].textures[0].Query()
+	an.width = float64(width)
+	an.height = float64(height)
 
-	return &an
+	return &an, err
 }
 
 func (an *animator) onDraw(renderer *sdl.Renderer) error {
@@ -52,7 +56,7 @@ type sequence struct {
 	frame int
 	sampleRate float64
 	loop bool
-	auto bool
+	finished bool
 }
 
 func newSequence(filepath string, sampleRate float64, loop bool, renderer *sdl.Renderer) (*sequence, error) {
