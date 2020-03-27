@@ -18,7 +18,9 @@ func newGravity (container *element) *gravity {
 
 func (g *gravity) onUpdate() error {
 	cont := g.container
-	if ! cont.onFloor {
+	on := cont.getComponent(&onSurface{}).(*onSurface)
+
+	if ! on.H {
 		cont.position.y += g.speed * delta
 		for i := range cont.collisionPoints {
 			cont.collisionPoints[i].center = cont.position
@@ -38,12 +40,15 @@ func (g *gravity) onCollision(other *element) error {
 type onSurface struct {
 	container *element
 	animator * animator
+	H, V bool
 }
 
 func newOnSurface (container *element) *onSurface {
 	return &onSurface{
 		container: container,
 		animator: container.getComponent(&animator{}).(*animator),
+		H: false,
+		V: false,
 	}
 }
 
@@ -52,22 +57,14 @@ func (ons *onSurface) onUpdate() error {
 	height := ons.animator.height
 	width := ons.animator.width
 	if (cont.position.y + height / 2) >= YScreenLength {
-		cont.onFloor = true
+		ons.H = true
 	} else {
-		cont.onFloor = false
+		ons.H = false
 	}
-	if (cont.position.y - height / 2) <= 0 {
-		cont.onCeiling = true
+	if (cont.position.x - width /2 ) <= 0 || (cont.position.x + width /2 ) >= XScreenLength {
+		ons.V= true
 	} else {
-		cont.onCeiling = false
-	}
-	if (cont.position.x - width /2 ) <= 0 {
-		cont.onLeftWall = true
-	} else if (cont.position.x + width /2 ) >= XScreenLength {
-		cont.onRightWall = true
-	} else {
-		cont.onRightWall = false
-		cont.onLeftWall = false
+		ons.V = false
 	}
 	return nil
 }

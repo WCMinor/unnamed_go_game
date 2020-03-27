@@ -51,7 +51,7 @@ func main() {
 	defer renderer.Destroy()
 
 	gameElements = append(gameElements, newPlayer(renderer, "boy"))
-	gameElements = append(gameElements, newFloor(renderer, "floor"))
+	//gameElements = append(gameElements, newFloor(renderer, "floor"))
 	
 	// Runs until the end of game
 	for {

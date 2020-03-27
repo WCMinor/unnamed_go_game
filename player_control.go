@@ -19,28 +19,29 @@ func newKeyboardMover (container *element) *keyboardMover {
 
 func (mover *keyboardMover) onUpdate() error {
 	cont := mover.container
+	on := cont.getComponent(&onSurface{}).(*onSurface)
 	keys := sdl.GetKeyboardState()
 	if keys[sdl.SCANCODE_LEFT] == 1 {
-		if ! cont.onLeftWall {
+		if ! on.V {
 				cont.position.x -= mover.speed * delta
 				for i := range cont.collisionPoints {
 					cont.collisionPoints[i].center = cont.position
 				}
 		}
 		cont.flip = sdl.FLIP_HORIZONTAL
-		if cont.onFloor {
+		if on.H {
 			cont.action = "walk"
 		}
 		cont.lastMove = time.Now()
 	} else if keys[sdl.SCANCODE_RIGHT] == 1 {
-		if ! cont.onRightWall {
+		if ! on.V {
 				cont.position.x += mover.speed * delta
 				for i := range cont.collisionPoints {
 					cont.collisionPoints[i].center = cont.position
 				}
 		}
 		cont.flip = sdl.FLIP_NONE
-		if cont.onFloor {
+		if on.H {
 			cont.action = "walk"
 		}
 		cont.lastMove = time.Now()
@@ -70,7 +71,8 @@ func newKeyboardJumper (container *element) *keyboardJumper {
 
 func (jumper *keyboardJumper) onUpdate() error {
 	cont := jumper.container
-	if ! cont.onCeiling && cont.jumping {
+	on := cont.getComponent(&onSurface{}).(*onSurface)
+	if cont.jumping {
 		if (YScreenLength - cont.position.y) <= cont.jumpHeight {
 			cont.position.y -= Gravity * delta * cont.yVelocity
 			for i := range cont.collisionPoints {
@@ -82,7 +84,7 @@ func (jumper *keyboardJumper) onUpdate() error {
 			cont.jumping = false
 		}
 	}
-	if cont.onFloor {
+	if on.H {
 		keys := sdl.GetKeyboardState()
 		if keys[sdl.SCANCODE_SPACE] == 1 {
 			cont.jumping = true

@@ -19,7 +19,7 @@ type component interface {
 
 type element struct {
 	name string
-	active, onFloor, onRightWall, onLeftWall, onCeiling, jumping bool
+	active, jumping bool
 	action, direction string
 	position vector
 	spritePos int
