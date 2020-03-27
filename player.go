@@ -21,16 +21,16 @@ func newPlayer(renderer *sdl.Renderer, name string) *element {
 
 	sequences := make(map[string]*sequence)
 
-	sequenceList :=[]string{
-		"idle",
-		"walk",
-		"run",
-		"jump",
-		"dead",
+	sequenceMap :=map[string]bool{
+		"idle": true,
+		"walk": true,
+		"run": true,
+		"jump": false,
+		"dead": false,
 	}
 
-	for _, seq := range sequenceList {
-		sequence, err := newSequence(path.Join(spritesPath, player.name, seq), sampleRate, true, renderer)
+	for seq, loop := range sequenceMap {
+		sequence, err := newSequence(path.Join(spritesPath, player.name, seq), sampleRate, loop, renderer)
 		if err != nil {
 			panic(fmt.Errorf("loading textures sequence: %v", err))
 		}
