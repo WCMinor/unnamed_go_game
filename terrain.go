@@ -15,6 +15,12 @@ func newFloor(renderer *sdl.Renderer, name string) *element {
 	fmt.Println(spriteRenderer.height)
 	floor.position.y = YScreenLength - spriteRenderer.height / 2.0
 	floor.addComponent(spriteRenderer)
+	colRect := rect{
+		center: vector{floor.position.x, floor.position.y},
+		width: spriteRenderer.width,
+		height: spriteRenderer.height,
+	}
+	floor.collisionRects = append(floor.collisionRects, colRect)
 
 	return floor
 }

@@ -22,9 +22,15 @@ func drawTexture(tex *sdl.Texture, position vector, rotation float64, flip sdl.R
 		&sdl.Point{Y:(int32(height) / 2), X:(int32(width) / 2)},
 		flip)
 
+
 	if err != nil {
 		return fmt.Errorf("Rendering texture: %v", err)
 	}
+
+	if Debug {
+		renderer.SetDrawColor(0xFF, 0x00, 0x00, 0x00);
+	}
+	renderer.DrawPoint(int32(position.x), int32(position.y))
 	
 	return nil
 }

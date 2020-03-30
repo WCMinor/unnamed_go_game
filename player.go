@@ -15,8 +15,6 @@ func newPlayer(renderer *sdl.Renderer, name string) *element {
 	player.name = name
 	player.position.x = XScreenLength / 2.0
 	player.xVelocity = 10
-	player.yVelocity = 2
-	player.jumpHeight = 250
 	player.moveSpeed = time.Millisecond * 160 //milliseconds
 
 	sequences := make(map[string]*sequence)
@@ -42,14 +40,15 @@ func newPlayer(renderer *sdl.Renderer, name string) *element {
 	}
 	player.addComponent(animator)
 
-	player.position.y = YScreenLength - animator.width
+	//player.position.y = YScreenLength - animator.width
+	player.position.y = 0
 
 	gravity := newGravity(player)
 	player.addComponent(gravity)
+	jumper := newJumper(player, 2, 250)
+	player.addComponent(jumper)
 	mover := newKeyboardMover(player)
 	player.addComponent(mover)
-	jumper := newKeyboardJumper(player)
-	player.addComponent(jumper)
 	ons := newOnSurface(player)
 	player.addComponent(ons)
 	idle := newIdleDetector(player)
@@ -59,6 +58,12 @@ func newPlayer(renderer *sdl.Renderer, name string) *element {
 		center: player.position,
 		radius: animator.width / 3,
 	}
+	colRect := rect{
+		center: vector{player.position.x, player.position.y},
+		width: animator.width,
+		height: animator.height,
+	}
+	player.collisionRects = append(player.collisionRects, colRect)
 
 	player.collisionPoints = append(player.collisionPoints, colPoint)
 

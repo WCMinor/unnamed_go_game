@@ -19,15 +19,16 @@ type component interface {
 
 type element struct {
 	name string
-	active, jumping bool
+	active bool
 	action, direction string
 	position vector
 	spritePos int
-	rotation, xVelocity, yVelocity, jumpHeight float64
+	rotation, xVelocity float64
 	flip sdl.RendererFlip
 	lastMove time.Time
 	moveSpeed time.Duration
 	collisionPoints []circle
+	collisionRects []rect
 	components []component
 }
 

@@ -21,10 +21,7 @@ func (g *gravity) onUpdate() error {
 	on := cont.getComponent(&onSurface{}).(*onSurface)
 
 	if ! on.H {
-		cont.position.y += g.speed * delta
-		for i := range cont.collisionPoints {
-			cont.collisionPoints[i].center = cont.position
-		}
+		moveDown(cont, g.speed)
 	}
 	return nil
 }
@@ -57,14 +54,14 @@ func (ons *onSurface) onUpdate() error {
 	height := ons.animator.height
 	width := ons.animator.width
 	if (cont.position.y + height / 2) >= YScreenLength {
-		ons.H = true
+		//ons.H = true
 	} else {
-		ons.H = false
+		//ons.H = false
 	}
 	if (cont.position.x - width /2 ) <= 0 || (cont.position.x + width /2 ) >= XScreenLength {
-		ons.V= true
+		//ons.V= true
 	} else {
-		ons.V = false
+		//ons.V = false
 	}
 	return nil
 }
@@ -74,5 +71,6 @@ func (ons *onSurface) onDraw(renderer *sdl.Renderer) error {
 }
 
 func (ons *onSurface) onCollision(other *element) error {
+	ons.H = true
 	return nil
 }

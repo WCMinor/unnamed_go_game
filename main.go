@@ -10,6 +10,7 @@ import (
 const (
 	XScreenLength float64 = 1800
 	YScreenLength float64 = 800
+	Debug bool = true
 )
 const (
 	spritesPath = "sprites"
@@ -18,7 +19,7 @@ const (
 // Physics constants
 const (
 	Gravity float64 = 10
-	FramesPerSecond float64 = 60
+	FramesPerSecond float64 = 50
 )
 //  an slice with all the elements
 var (
@@ -51,7 +52,7 @@ func main() {
 	defer renderer.Destroy()
 
 	gameElements = append(gameElements, newPlayer(renderer, "boy"))
-	//gameElements = append(gameElements, newFloor(renderer, "floor"))
+	gameElements = append(gameElements, newFloor(renderer, "floor"))
 	
 	// Runs until the end of game
 	for {
